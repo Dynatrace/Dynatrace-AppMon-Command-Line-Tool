@@ -1,0 +1,6 @@
+server.host=localhost
+server.port.http=8020
+server.port.https=8021
+server.ssl=true
+user=admin
+pass=admin

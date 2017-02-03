@@ -20,8 +20,6 @@ public final class Constants {
 	// we need to set it to 80, because date is added on serverside
 	public static final int SESSION_NAME_MAX_SIZE = 80;
 
-	public static final int CONNECTION_TIMEOUT = 30_000;
-
 	public static final String ERROR_MESSAGE_NO_LAUNCHER_FOUND =
 			" Unable to find the server launcher. Please set the " + DT_HOME + " environment variable.";
 

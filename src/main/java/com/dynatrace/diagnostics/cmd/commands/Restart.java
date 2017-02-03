@@ -7,14 +7,26 @@ import com.dynatrace.sdk.server.exceptions.ServerResponseException;
 import com.dynatrace.sdk.server.servermanagement.ServerManagement;
 
 import static com.dynatrace.diagnostics.cmd.Constants.CMD_RESTART;
+import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
+import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
 
 /**
  * @author Dariusz.Glugla
  */
-@Parameters(commandNames = CMD_RESTART, commandDescription = "restarts the Dynatrace Server (or Collector if specified)")
+@Parameters(commandNames = CMD_RESTART, commandDescription = "restarts the Dynatrace Server")
 public class Restart extends AbstractHostPortCommand {
 
 	@Override public void run(CmdOptions options) throws ServerConnectionException, ServerResponseException {
-		new ServerManagement(getClient()).restart();
+		final StringBuilder sb = new StringBuilder();
+		sb.append(" --- Restart --- \n\n");
+		sb.append(" restarting server.... \n\n");
+
+		if (new ServerManagement(getClient()).restart()) {
+			sb.append(" Server restarted sucessfully.\n");
+			printlnSuccessMessage(sb.toString());
+		} else {
+			sb.append(" Unable to restart Server.\n");
+			printlnErrorMessage(sb.toString());
+		}
 	}
 }

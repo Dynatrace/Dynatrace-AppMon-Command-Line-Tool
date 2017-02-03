@@ -69,13 +69,14 @@ public class Cmd {
 
 	private void run(String[] args) {
 		try {
+			Package classPackage = Cmd.class.getPackage();
 			println("\n" +
 					StringUtils.repeat('-', TITLE_SIZE) + "\n" +
-					StringUtils.center(Cmd.class.getPackage().getImplementationTitle(), TITLE_SIZE) + "\n" +
-					StringUtils.center("Copyright (C) 2004-2017 " + Cmd.class.getPackage().getImplementationVendor(), TITLE_SIZE)
+					StringUtils.center(classPackage.getImplementationTitle(), TITLE_SIZE) + "\n" +
+					StringUtils.center("Copyright (C) 2004-2017 " + classPackage.getImplementationVendor(), TITLE_SIZE)
 					+ "\n" +
 					StringUtils.repeat('-', TITLE_SIZE) + "\n" +
-					StringUtils.center(" Version " + Cmd.class.getPackage().getImplementationVersion(), TITLE_SIZE) + "\n");
+					StringUtils.center(" Version " + classPackage.getImplementationVersion(), TITLE_SIZE) + "\n");
 
 			jCommander.parse(args);
 			run(getExecutedCommand());

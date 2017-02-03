@@ -2,16 +2,16 @@ package com.dynatrace.diagnostics.cmd;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static com.dynatrace.diagnostics.cmd.MessagePrinter.println;
 
 
 public class Settings {
-
-	private static final Logger logger = Logger.getLogger(Settings.class.getName());
 
 	private static final String PROPERTIES_FILE = "cmd.properties";
 	private static final String PROPERTY_SERVER_HOST = "server.host";
@@ -36,6 +36,8 @@ public class Settings {
 	private final String userName;
 	private final String password;
 
+	private static boolean logWarnings = false;
+
 	private Settings(String serverHost, int serverPortHttp, int serverPortHttps, boolean sslEnabled, String userName,
 			String password) {
 		this.serverHost = serverHost;
@@ -46,7 +48,8 @@ public class Settings {
 		this.password = password;
 	}
 
-	public static Settings load() {
+	public static Settings load(boolean logWarnings) {
+		Settings.logWarnings = logWarnings;
 		Properties properties = new Properties();
 
 		readDefaultPropertiesFile(properties);
@@ -79,7 +82,10 @@ public class Settings {
 
 			return new Settings(serverHost, serverPortHttp, serverPortHttps, sslEnabled, userName, password);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Unable to parse properties.", e);
+			if (logWarnings) {
+				e.printStackTrace();
+				println(" Unable to parse properties: " + e.getMessage());
+			}
 		}
 		return new Settings(DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, DEFAULT_SERVER_SSL_PORT, DEFAULT_SSL, StringUtils.EMPTY,
 				StringUtils.EMPTY);
@@ -93,18 +99,24 @@ public class Settings {
 			defaultPropertiesInStream = Settings.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE);
 
 			if (defaultPropertiesInStream == null) {
-				logger.log(Level.WARNING, "Unable to find the default property file.");
+				if (logWarnings) {
+					println(" Unable to find the default property file.");
+				}
 			} else {
 				destination.load(defaultPropertiesInStream);
 			}
 		} catch (IOException ioe) {
-			logger.log(Level.WARNING, "Unable to read the default property file.");
+			if (logWarnings) {
+				println(" Unable to read the default property file.");
+			}
 		} finally {
 			if (defaultPropertiesInStream != null) {
 				try {
 					defaultPropertiesInStream.close();
 				} catch (IOException e) {
-					logger.log(Level.WARNING, "Unable to close the default property file.");
+					if (logWarnings) {
+						println(" Unable to close the default property file.");
+					}
 				}
 			}
 		}
@@ -119,19 +131,25 @@ public class Settings {
 			if (customerPropertiesFile.exists()) {
 				customerPropertiesInStream = new FileInputStream(new File(PROPERTIES_FILE));
 
-				System.out.println(" Loading customized properties from " + customerPropertiesFile.getAbsolutePath());
-				System.out.println();
+				println(" Loading customized properties from " + customerPropertiesFile.getAbsolutePath());
+				println("");
 
 				destination.load(customerPropertiesInStream);
 			}
 		} catch (Exception e) { //we do not want the cmd tool to let any errors slip outside
-			logger.log(Level.WARNING, "Unable to read customized properties.");
+			if (logWarnings) {
+				e.printStackTrace();
+				println(" Unable to read customized properties: " + e.getMessage());
+			}
 		} finally {
 			if (customerPropertiesInStream != null) {
 				try {
 					customerPropertiesInStream.close();
 				} catch (IOException e) {
-					logger.log(Level.WARNING, "Unable to close the customized property file.");
+					if (logWarnings) {
+						e.printStackTrace();
+						println(" Unable to close the customized property file: " + e.getMessage());
+					}
 				}
 			}
 		}
@@ -143,9 +161,10 @@ public class Settings {
 			try {
 				return Integer.parseInt(sValue);
 			} catch (NumberFormatException e) {
-				logger.log(Level.WARNING,
-						"Invalid value '" + sValue + "' for property '" + property + "', using default value '" + defaultValue
-								+ "'.");
+				if (logWarnings) {
+					println(" Invalid value '" + sValue + "' for property '" + property + "', using default value '"
+							+ defaultValue + "'.");
+				}
 				return defaultValue;
 			}
 		}
@@ -159,9 +178,10 @@ public class Settings {
 			try {
 				return Boolean.valueOf(sValue).booleanValue();
 			} catch (NumberFormatException e) {
-				logger.log(Level.WARNING,
-						"Invalid value '" + sValue + "' for property '" + property + "', using default value '" + defaultValue
-								+ "'.");
+				if (logWarnings) {
+					println(" Invalid value '" + sValue + "' for property '" + property + "', using default value '"
+							+ defaultValue + "'.");
+				}
 				return defaultValue;
 			}
 		}
@@ -179,98 +199,8 @@ public class Settings {
 	}
 
 	private static void logMissingProperty(String property, Object defaultValue) {
-		if (logger.isLoggable(Level.FINE)) {
-			logger.log(Level.FINE, "Property '" + property + "' not found, using default value '" + defaultValue + "'.");
-		}
-	}
-
-	void extractKeyStoreIfNeeded() throws SetupException {
-		// extract keystore file only if SSL is actually used
-		if (!sslEnabled) {
-			return;
-		}
-
-		// read system property javax.net.ssl.trustStore
-		String trustStoreProperty = null;
-		try {
-			trustStoreProperty = System.getProperty(PROPERTY_TRUSTSTORE);
-			if (trustStoreProperty == null) {
-				throw new IllegalStateException("No system property '" + PROPERTY_TRUSTSTORE + "' defined");
-			}
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Unable to read system property " + PROPERTY_TRUSTSTORE);
-			return;
-		}
-
-		// do not extract keystore file if user has specified a customized keystore
-		if (!DEFAULT_KEYSTORE_LOCATION.equals(trustStoreProperty)) {
-			return;
-		}
-
-		File keystoreFile = new File(DEFAULT_KEYSTORE_LOCATION);
-
-		// if default keystore file already exists, extraction will not be necessary
-		if (keystoreFile.exists()) {
-			return;
-		}
-
-		URL url = null;
-		try {
-			url = this.getClass().getClassLoader().getResource(DEFAULT_KEYSTORE_LOCATION);
-		} catch (Exception e) {
-			throw new SetupException("Unable to find keystore file for extraction.", e);
-		}
-		if (url == null) {
-			throw new SetupException("Unable to find keystore file for extraction.");
-		}
-
-		byte[] buffer = new byte[1024];
-		FileOutputStream fos = null;
-		InputStream openStream = null;
-
-		try {
-			if (!keystoreFile.createNewFile()) {
-				throw new SetupException("Unable to extract keystore file.");
-			}
-		} catch (IOException e) {
-			throw new SetupException(
-					"Unable to extract keystore file. Please run command as privileged user if you are not allowed to write to '"
-							+ keystoreFile.getAbsolutePath() + "'.", e);
-		}
-
-		try {
-			fos = new FileOutputStream(keystoreFile);
-			openStream = url.openStream();
-
-			int read = openStream.read(buffer);
-			while (read != -1) {
-				fos.write(buffer, 0, read);
-				read = openStream.read(buffer);
-			}
-			fos.close();
-			fos = null;
-
-			System.out.println(" Keystore successfully extracted to " + keystoreFile.getAbsolutePath());
-			System.out.println();
-
-			openStream.close();
-			openStream = null;
-
-		} catch (Exception e) {
-			throw new SetupException("Unable to extract keystore file. SSL connections will not work.", e);
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException ioe) {
-				}
-			}
-			if (openStream != null) {
-				try {
-					openStream.close();
-				} catch (IOException ioe) {
-				}
-			}
+		if (logWarnings) {
+			println(" Property '" + property + "' not found, using default value '" + defaultValue + "'.");
 		}
 	}
 
