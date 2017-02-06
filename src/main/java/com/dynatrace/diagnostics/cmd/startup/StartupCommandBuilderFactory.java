@@ -1,10 +1,3 @@
-/***************************************************
- * dynaTrace Diagnostics (c) dynaTrace software GmbH
- *
- * @file: StartupCommandBuilderFactory.java
- * @date: 24.04.2014
- * @author: cwat-hploch
- */
 package com.dynatrace.diagnostics.cmd.startup;
 
 import java.io.File;
@@ -16,12 +9,12 @@ import java.io.File;
  */
 public class StartupCommandBuilderFactory {
 
-	public static AbstractStartupCommandBuilder startupCommandBuilder(OS os, StringBuilder sb, File serverLaunchDir) {
+	public static AbstractStartupCommandBuilder startupCommandBuilder(OS os, File serverLaunchDir) {
 		switch (os) {
 			case Windows:
-				return new WindowsStartupCommandBuilder(sb, serverLaunchDir);
+				return new WindowsStartupCommandBuilder(serverLaunchDir);
 			case Linux:
-				return new LinuxStartupCommandBuilder(sb, serverLaunchDir);
+				return new LinuxStartupCommandBuilder(serverLaunchDir);
 		}
 		return null;
 	}

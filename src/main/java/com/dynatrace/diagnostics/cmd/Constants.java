@@ -14,24 +14,20 @@ public final class Constants {
 
 	public static final String DT_HOME = "DT_HOME";
 
-	public static final int TITLE_SIZE = 60;
+	static final int TITLE_SIZE = 60;
 
 	// max size in repository db for session name is 100
 	// we need to set it to 80, because date is added on serverside
 	public static final int SESSION_NAME_MAX_SIZE = 80;
 
-	public static final String ERROR_MESSAGE_NO_LAUNCHER_FOUND =
-			" Unable to find the server launcher. Please set the " + DT_HOME + " environment variable.";
-
 	//Hidden dtCmd options
 	public static final String OPT_DTHOME = "-dthome";
 
-	public static final String DT_CMD = "dtcmd";
+	static final String DT_CMD = "dtcmd";
 
 	public static final String FLAG_VERBOSE = "-verbose";
 	public static final String FLAG_NO_SSL = "-nossl";
 	public static final String FLAG_LOCK = "-lock";
-	public static final String FLAG_STAT_BRIEF = "-brief";
 	public static final String FLAG_NOTIMESTAMP = "-notimestamp";
 
 	public static final String CMD_STARTUP = "-startup";
@@ -51,11 +47,5 @@ public final class Constants {
 	public static final String OPT_CONFIG_SHORT = "-c";
 	public static final String OPT_CONFIG = "-config";
 	public static final String OPT_STARTSESSION_NAME = "-f";
-
-	public static final String CMD_HEADER =
-			"\n-------------------------------------------------------------------------------\n" +
-					" dynaTrace Commandline Tool \n " + Cmd.class.getPackage().getImplementationTitle() + Cmd.class.getPackage()
-					.getImplementationVendor() + Cmd.class.getPackage().getImplementationVersion() +
-					"\n-------------------------------------------------------------------------------\n";
 
 }

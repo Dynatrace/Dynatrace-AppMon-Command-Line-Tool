@@ -17,8 +17,8 @@ public class LinuxStartupCommandBuilder extends AbstractStartupCommandBuilder {
 	private static final String FRONTEND_SERVER_SERVICE_NAME = "start-frontend";
 
 
-	public LinuxStartupCommandBuilder(StringBuilder sb, File serverLaunchDir) {
-		super(sb, serverLaunchDir);
+	LinuxStartupCommandBuilder(File serverLaunchDir) {
+		super(serverLaunchDir);
 	}
 
 	@Override

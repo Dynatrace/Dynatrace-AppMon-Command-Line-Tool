@@ -14,8 +14,8 @@ public class WindowsStartupCommandBuilder extends AbstractStartupCommandBuilder 
 	private static final String SERVER_SERVICE_NAME = "Dynatrace Server";
 	private static final String FRONTEND_SERVER_SERVICE_NAME = "Dynatrace Frontend Server";
 
-	public WindowsStartupCommandBuilder(StringBuilder sb, File serverLaunchDir) {
-		super(sb, serverLaunchDir);
+	WindowsStartupCommandBuilder(File serverLaunchDir) {
+		super(serverLaunchDir);
 	}
 
 	@Override

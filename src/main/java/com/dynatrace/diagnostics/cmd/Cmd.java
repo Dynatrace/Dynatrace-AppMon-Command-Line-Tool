@@ -6,24 +6,17 @@ import com.beust.jcommander.ParametersDelegate;
 import com.dynatrace.diagnostics.cmd.commands.*;
 import com.dynatrace.diagnostics.cmd.commands.Shutdown;
 import com.dynatrace.diagnostics.cmd.model.CmdOptions;
-import com.dynatrace.diagnostics.cmd.model.Factory;
-import com.dynatrace.sdk.server.BasicServerConfiguration;
-import com.dynatrace.sdk.server.DynatraceClient;
-import com.dynatrace.sdk.server.ServerConfiguration;
 import com.dynatrace.sdk.server.exceptions.ServerConnectionException;
 import com.dynatrace.sdk.server.exceptions.ServerResponseException;
-import com.dynatrace.sdk.server.servermanagement.ServerManagement;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.InvalidParameterException;
 
 import static com.dynatrace.diagnostics.cmd.Constants.*;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.println;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
+import static java.lang.System.out;
 
 /**
  * Command Line Tool
- * Features: see method CmdHelper.getUsage()
  *
  * @author Dariusz.Glugla
  */
@@ -44,10 +37,9 @@ public class Cmd {
 	@ParametersDelegate
 	private CmdOptions cmdOptions = new CmdOptions();
 
-	public Cmd() {
+	private Cmd() {
 		jCommander = new JCommander(this);
 
-		jCommander.addConverterFactory(new Factory());
 		jCommander.setAcceptUnknownOptions(true);
 		jCommander.setCaseSensitiveOptions(false);
 		jCommander.setProgramName(DT_CMD);
@@ -70,7 +62,7 @@ public class Cmd {
 	private void run(String[] args) {
 		try {
 			Package classPackage = Cmd.class.getPackage();
-			println("\n" +
+			out.println("\n" +
 					StringUtils.repeat('-', TITLE_SIZE) + "\n" +
 					StringUtils.center(classPackage.getImplementationTitle(), TITLE_SIZE) + "\n" +
 					StringUtils.center("Copyright (C) 2004-2017 " + classPackage.getImplementationVendor(), TITLE_SIZE)
@@ -81,7 +73,7 @@ public class Cmd {
 			jCommander.parse(args);
 			run(getExecutedCommand());
 		} catch (ParameterException | InvalidParameterException | NullPointerException e) {
-			printlnErrorMessage(e.getMessage() + "\n");
+			out.println(e.getMessage() + "\n");
 			jCommander.usage();
 		}
 	}
@@ -90,12 +82,12 @@ public class Cmd {
 		try {
 			cmd.run(cmdOptions);
 		} catch (ServerConnectionException e) {
-			printlnErrorMessage("Unable to establish connection with Dynatrace Server: " + e.getMessage());
+			out.println(" Unable to establish connection with Dynatrace Server: " + e.getMessage());
 		} catch (ServerResponseException e) {
-			printlnErrorMessage("Unable to fetch response from Dynatrace Server: " + e.getMessage());
+			out.println(" Unable to fetch response from Dynatrace Server: " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			printlnErrorMessage("Uknown error occured: " + e.getMessage());
+			out.println(" Uknown error occured: " + e.getMessage());
 		}
 	}
 
@@ -128,18 +120,4 @@ public class Cmd {
 				throw new InvalidParameterException("Unknown operation: " + parsedCommand);
 		}
 	}
-
-	private void startServer(String userName, String password)
-			throws ServerConnectionException, ServerResponseException {
-		new ServerManagement(getClient(getBasicServerConfig(userName, password))).restart();
-	}
-
-	private DynatraceClient getClient(ServerConfiguration serverConfiguration) {
-		return new DynatraceClient(serverConfiguration);
-	}
-
-	private ServerConfiguration getBasicServerConfig(String userName, String password) {
-		return new BasicServerConfiguration(userName, password);
-	}
-
 }

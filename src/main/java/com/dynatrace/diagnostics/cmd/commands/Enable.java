@@ -1,11 +1,11 @@
 package com.dynatrace.diagnostics.cmd.commands;
 
 import com.beust.jcommander.Parameters;
-import com.dynatrace.diagnostics.cmd.MessagePrinter;
 import com.dynatrace.diagnostics.cmd.model.CmdOptions;
 import com.dynatrace.sdk.server.systemprofiles.SystemProfiles;
 
 import static com.dynatrace.diagnostics.cmd.Constants.CMD_ENABLE;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -14,9 +14,11 @@ import static com.dynatrace.diagnostics.cmd.Constants.CMD_ENABLE;
 public class Enable extends AbstractSystemProfileCommand {
 
 	@Override public void run(CmdOptions options) throws Exception {
-		SystemProfiles profiles = new SystemProfiles(getClient());
+		out.println(" ---- Enable System Profile ----");
+
 		String systemProfileName = getSystemProfile();
-		profiles.enableProfile(systemProfileName);
-		MessagePrinter.printlnSuccessMessage(" ---- System Profile " + systemProfileName + " is now enabled ----");
+		new SystemProfiles(getClient()).enableProfile(systemProfileName);
+
+		out.println(" System Profile '" + systemProfileName + "' is now enabled");
 	}
 }

@@ -9,8 +9,7 @@ import com.dynatrace.sdk.server.sessions.models.StartRecordingRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.dynatrace.diagnostics.cmd.Constants.*;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -25,29 +24,27 @@ public class StartSession extends AbstractSystemProfileCommand {
 	private Boolean lock;
 	@Parameter(names = FLAG_NOTIMESTAMP, description = "specifies to not append timestamp to sessionname")
 	private Boolean noTimestamp;
-	@Parameter(names = OPT_RECORDINGOPTION, description = "recording option of the session file", required = true)
+	@Parameter(names = OPT_RECORDINGOPTION, description = "recording option of the session file", converter = RecordingOption.Converter.class)
 	private RecordingOption recordingOption = RecordingOption.ALL;
 
 	@Override public void run(CmdOptions options) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		sb.append(" ---- Start Session ----\n");
+		out.println(" ---- Start Session ----");
 
 		Sessions sessions = new Sessions(getClient());
 		String systemProfileName = getSystemProfile();
 		String sessionName = sessions.startRecording(buildRequest(systemProfileName));
 		if (StringUtils.isBlank(sessionName)) {
-			sb.append(" Starting session recording failed.\n");
-			printlnErrorMessage(sb.toString());
+			out.println(" Starting session recording failed.");
 		} else {
-			sb.append(" Session recording successfully started: ").append(sessionName).append('\n');
-			printlnSuccessMessage(sb.toString());
+			out.print(" Session recording successfully started: ");
+			out.println(sessionName);
 		}
 	}
 
 	private StartRecordingRequest buildRequest(String systemProfile) {
 		StartRecordingRequest request = new StartRecordingRequest(systemProfile);
 		if (StringUtils.isNotBlank(sessionName)) {
-			request.setPresentableName(sessionName);
+			request.setPresentableName(StringUtils.left(sessionName.trim(), SESSION_NAME_MAX_SIZE));
 		}
 		if (noTimestamp != null) {
 			request.setTimestampAllowed(!noTimestamp);

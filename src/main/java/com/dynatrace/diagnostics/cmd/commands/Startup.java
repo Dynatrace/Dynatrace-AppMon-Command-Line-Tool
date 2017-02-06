@@ -9,9 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 
-import static com.dynatrace.diagnostics.cmd.Constants.*;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
+import static com.dynatrace.diagnostics.cmd.Constants.CMD_STARTUP;
+import static com.dynatrace.diagnostics.cmd.Constants.DT_HOME;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -23,9 +23,8 @@ public class Startup extends AbstractCommand {
 
 	@Override
 	public void run(CmdOptions options) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(" --- Startup --- \n\n");
-		sb.append(" starting server.... \n\n");
+		out.println(" ---- Startup ----");
+		out.println(" starting server ...");
 
 		String osName = System.getProperty("os.name").toUpperCase();
 		boolean isWindows = osName.startsWith("WIN");
@@ -34,41 +33,43 @@ public class Startup extends AbstractCommand {
 
 		File serverLaunchDir = searchServerLaunchDir(isWindows || isLinux, options);
 		if (serverLaunchDir == null) {
-			sb.append(ERROR_MESSAGE_NO_LAUNCHER_FOUND);
-			printlnErrorMessage(sb.toString());
+			out.println(" Unable to find the server launcher. Please set the " + DT_HOME + " environment variable.");
 			return;
 		}
 
-		String errorMessage = startupOSDependentServers(sb, serverLaunchDir, isWindows);
+		String errorMessage = startupOSDependentServers(serverLaunchDir, isWindows);
 		if (errorMessage == null) {
-			printlnSuccessMessage(sb.toString());
 			return;
 		}
 
-		sb.append(" Unable to start server.\n");
-		sb.append(" Failed with: ").append(errorMessage).append(".\n");
+		out.println(" Unable to start server.");
+		out.print(" Failed with: ");
+		out.print(errorMessage);
+		out.println(".");
 		if (isWindows) {
-			sb.append(" Please ensure to run dtcmd as administrator!\n");
+			out.println(" Please ensure to run dtcmd as administrator!");
 		}
-		printlnErrorMessage(sb.toString());
 	}
 
-	private String startupOSDependentServers(StringBuilder sb, File serverLaunchDir, boolean isWindows) {
+	private String startupOSDependentServers(File serverLaunchDir, boolean isWindows) {
 		AbstractStartupCommandBuilder commandBuilder = StartupCommandBuilderFactory.startupCommandBuilder(
-				isWindows ? StartupCommandBuilderFactory.OS.Windows : StartupCommandBuilderFactory.OS.Linux,
-				sb, serverLaunchDir);
+				isWindows ? StartupCommandBuilderFactory.OS.Windows : StartupCommandBuilderFactory.OS.Linux, serverLaunchDir);
+		if (commandBuilder == null) {
+			return null;
+		}
 
-		return startUpServers(serverLaunchDir, commandBuilder.buildServerStartupCommand(),
+		return startUpServers(serverLaunchDir,
+				commandBuilder.buildServerStartupCommand(),
 				commandBuilder.buildFrontendServerStartupCommand());
 	}
 
 	private String startUpServers(File serverLaunchDir, String commandServer, String commandFrontendServer) {
 		ProcessStarter processStarter = new ProcessStarter();
-		if (!processStarter.run(commandServer, serverLaunchDir)) {
+		if (StringUtils.isNotBlank(commandServer) && !processStarter.run(commandServer, serverLaunchDir)) {
 			return processStarter.getErrorMessage();
 		}
 
-		if (!processStarter.run(commandFrontendServer, serverLaunchDir)) {
+		if (StringUtils.isNotBlank(commandFrontendServer) && !processStarter.run(commandFrontendServer, serverLaunchDir)) {
 			return processStarter.getErrorMessage();
 		}
 
@@ -82,8 +83,6 @@ public class Startup extends AbstractCommand {
 	 * @author anita.engleder
 	 */
 	private File searchServerLaunchDir(boolean lookForIniFile, CmdOptions options) {
-		StringBuilder sb = new StringBuilder();
-
 		// 1. dtHome can be forced via dtAnt ("hidden" flag):
 		if (StringUtils.isNotBlank(options.getDtHome())) {
 			File path = new File(options.getDtHome());
@@ -97,9 +96,13 @@ public class Startup extends AbstractCommand {
 			try {
 				dtEnvHome = System.getenv(DT_HOME);
 			} catch (Error e) {
-				sb.append(" Warning: Please ensure that ").append(DT_HOME).append(" system property is set correctly.\n");
+				out.print(" Warning: Please ensure that ");
+				out.print(DT_HOME);
+				out.println(" system property is set correctly.");
 			} catch (SecurityException e) {
-				sb.append("Unable to receive the ").append(DT_HOME).append(" environment variable. Insufficient rights\n");
+				out.print(" Unable to receive the ");
+				out.print(DT_HOME);
+				out.println(" environment variable. Insufficient privileges.");
 				isUnableToReceiveENVHOME = true;
 			}
 			try {
@@ -111,7 +114,9 @@ public class Startup extends AbstractCommand {
 				}
 			} catch (SecurityException e) {
 				if (!isUnableToReceiveENVHOME) {
-					sb.append("Unable to receive the ").append(DT_HOME).append(" system property. Insufficient rights\n");
+					out.print(" Unable to receive the ");
+					out.print(DT_HOME);
+					out.println(" system property. Insufficient privileges.");
 				}
 			}
 
@@ -135,7 +140,6 @@ public class Startup extends AbstractCommand {
 			}
 
 		}
-		printlnErrorMessage(sb.toString()); // print Error Message only in case of IniFile is not found
 		return null;
 	}
 
@@ -195,13 +199,13 @@ public class Startup extends AbstractCommand {
 				return false;
 			}
 
-			new StreamRedirector(proc.getInputStream(), System.out).start();
+			new StreamRedirector(proc.getInputStream(), out).start();
 			new StreamRedirector(proc.getErrorStream(), System.err).start();
 
 			return true;
 		}
 
-		public String getErrorMessage() {
+		String getErrorMessage() {
 			return errorMessage;
 		}
 	}
@@ -216,7 +220,7 @@ public class Startup extends AbstractCommand {
 		private InputStream in = null;
 		private PrintStream out = null;
 
-		public StreamRedirector(InputStream in, PrintStream out) {
+		StreamRedirector(InputStream in, PrintStream out) {
 			this.in = in;
 			this.out = out;
 		}

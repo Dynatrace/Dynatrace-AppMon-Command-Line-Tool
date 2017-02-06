@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.println;
-
 
 public class Settings {
 
@@ -83,8 +81,7 @@ public class Settings {
 			return new Settings(serverHost, serverPortHttp, serverPortHttps, sslEnabled, userName, password);
 		} catch (Exception e) {
 			if (logWarnings) {
-				e.printStackTrace();
-				println(" Unable to parse properties: " + e.getMessage());
+				System.out.println(" Unable to parse properties: " + e.getMessage());
 			}
 		}
 		return new Settings(DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, DEFAULT_SERVER_SSL_PORT, DEFAULT_SSL, StringUtils.EMPTY,
@@ -100,14 +97,14 @@ public class Settings {
 
 			if (defaultPropertiesInStream == null) {
 				if (logWarnings) {
-					println(" Unable to find the default property file.");
+					System.out.println(" Unable to find the default property file.");
 				}
 			} else {
 				destination.load(defaultPropertiesInStream);
 			}
 		} catch (IOException ioe) {
 			if (logWarnings) {
-				println(" Unable to read the default property file.");
+				System.out.println(" Unable to read the default property file.");
 			}
 		} finally {
 			if (defaultPropertiesInStream != null) {
@@ -115,7 +112,7 @@ public class Settings {
 					defaultPropertiesInStream.close();
 				} catch (IOException e) {
 					if (logWarnings) {
-						println(" Unable to close the default property file.");
+						System.out.println(" Unable to close the default property file.");
 					}
 				}
 			}
@@ -131,15 +128,15 @@ public class Settings {
 			if (customerPropertiesFile.exists()) {
 				customerPropertiesInStream = new FileInputStream(new File(PROPERTIES_FILE));
 
-				println(" Loading customized properties from " + customerPropertiesFile.getAbsolutePath());
-				println("");
+				System.out.println(" Loading customized properties from " + customerPropertiesFile.getAbsolutePath());
+				System.out.println("");
 
 				destination.load(customerPropertiesInStream);
 			}
 		} catch (Exception e) { //we do not want the cmd tool to let any errors slip outside
 			if (logWarnings) {
 				e.printStackTrace();
-				println(" Unable to read customized properties: " + e.getMessage());
+				System.out.println(" Unable to read customized properties: " + e.getMessage());
 			}
 		} finally {
 			if (customerPropertiesInStream != null) {
@@ -147,8 +144,7 @@ public class Settings {
 					customerPropertiesInStream.close();
 				} catch (IOException e) {
 					if (logWarnings) {
-						e.printStackTrace();
-						println(" Unable to close the customized property file: " + e.getMessage());
+						System.out.println(" Unable to close the customized property file: " + e.getMessage());
 					}
 				}
 			}
@@ -162,7 +158,7 @@ public class Settings {
 				return Integer.parseInt(sValue);
 			} catch (NumberFormatException e) {
 				if (logWarnings) {
-					println(" Invalid value '" + sValue + "' for property '" + property + "', using default value '"
+					System.out.println(" Invalid value '" + sValue + "' for property '" + property + "', using default value '"
 							+ defaultValue + "'.");
 				}
 				return defaultValue;
@@ -176,10 +172,10 @@ public class Settings {
 		String sValue = (String) properties.get(property);
 		if (StringUtils.isNotBlank(sValue)) {
 			try {
-				return Boolean.valueOf(sValue).booleanValue();
+				return Boolean.valueOf(sValue);
 			} catch (NumberFormatException e) {
 				if (logWarnings) {
-					println(" Invalid value '" + sValue + "' for property '" + property + "', using default value '"
+					System.out.println(" Invalid value '" + sValue + "' for property '" + property + "', using default value '"
 							+ defaultValue + "'.");
 				}
 				return defaultValue;
@@ -200,7 +196,7 @@ public class Settings {
 
 	private static void logMissingProperty(String property, Object defaultValue) {
 		if (logWarnings) {
-			println(" Property '" + property + "' not found, using default value '" + defaultValue + "'.");
+			System.out.println(" Property '" + property + "' not found, using default value '" + defaultValue + "'.");
 		}
 	}
 

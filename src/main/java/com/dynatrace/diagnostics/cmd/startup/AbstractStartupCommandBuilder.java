@@ -1,13 +1,8 @@
-/***************************************************
- * dynaTrace Diagnostics (c) dynaTrace software GmbH
- *
- * @file: AbstractStartupCommandBuilder.java
- * @date: 24.04.2014
- * @author: cwat-hploch
- */
 package com.dynatrace.diagnostics.cmd.startup;
 
 import java.io.File;
+
+import static java.lang.System.out;
 
 
 /**
@@ -16,12 +11,10 @@ import java.io.File;
  */
 abstract public class AbstractStartupCommandBuilder {
 
-	protected StringBuilder sb;
-	protected File serverLaunchDir;
+	private File serverLaunchDir;
 
-	public AbstractStartupCommandBuilder(StringBuilder sb, File serverLaunchDir) {
+	AbstractStartupCommandBuilder(File serverLaunchDir) {
 		super();
-		this.sb = sb;
 		this.serverLaunchDir = serverLaunchDir;
 	}
 
@@ -29,26 +22,31 @@ abstract public class AbstractStartupCommandBuilder {
 
 	abstract public String buildFrontendServerStartupCommand();
 
-	protected final String buildCommand(String binary, String devBinary, String startupCommand) {
+	final String buildCommand(String binary, String devBinary, String startupCommand) {
 		File startupFile = new File(serverLaunchDir, binary);
 		if (startupFile.exists()) {
-			sb.append(" Found server startup file: ").append(startupFile.getAbsolutePath()).append('\n');
+			out.print(" Found server startup file: ");
+			out.println(startupFile.getAbsolutePath());
 
 			String command = buildCommand(startupFile, startupCommand);
 
-			sb.append(" command: ").append(command).append('\n');
+			out.print(" command: ");
+			out.println(command);
 			return command;
 		}
 		File startupDevFile = new File(serverLaunchDir, devBinary);
 		if (startupDevFile.exists()) {
-			sb.append(" Found development server startup file: ").append(startupDevFile.getAbsolutePath()).append('\n');
+			out.print(" Found development server startup file: ");
+			out.println(startupDevFile.getAbsolutePath());
 
 			String command = startupDevFile.getAbsolutePath();
 
-			sb.append(" command: ").append(command).append('\n');
+			out.print(" command: ");
+			out.println(command);
 			return command;
 		}
-		sb.append(" Could not find server startup file: ").append(startupFile.getAbsolutePath()).append('\n');
+		out.print(" Could not find server startup file: ");
+		out.println(startupFile.getAbsolutePath());
 		return null;
 	}
 

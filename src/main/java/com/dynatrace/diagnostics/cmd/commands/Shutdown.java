@@ -7,8 +7,7 @@ import com.dynatrace.sdk.server.exceptions.ServerResponseException;
 import com.dynatrace.sdk.server.servermanagement.ServerManagement;
 
 import static com.dynatrace.diagnostics.cmd.Constants.CMD_SHUTDOWN;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -17,16 +16,12 @@ import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage
 public class Shutdown extends AbstractHostPortCommand {
 
 	@Override public void run(CmdOptions options) throws ServerConnectionException, ServerResponseException {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(" --- Shutdown --- \n\n");
-		sb.append(" stopping server.... \n\n");
+		out.println(" ---- Shutdown ---- ");
 
 		if (new ServerManagement(getClient()).shutdown()) {
-			sb.append(" Server stopped sucessfully.\n");
-			printlnSuccessMessage(sb.toString());
+			out.println(" Server stopped sucessfully.");
 		} else {
-			sb.append(" Unable to stop Server.\n");
-			printlnErrorMessage(sb.toString());
+			out.println(" Unable to stop Server.");
 		}
 	}
 }

@@ -17,7 +17,7 @@ public enum RecordingOption {
 		return this.name().toLowerCase();
 	}
 
-	public class Converter implements IStringConverter<RecordingOption> {
+	public static class Converter implements IStringConverter<RecordingOption> {
 
 		@Override public RecordingOption convert(String s) {
 			if (StringUtils.isBlank(s)) {

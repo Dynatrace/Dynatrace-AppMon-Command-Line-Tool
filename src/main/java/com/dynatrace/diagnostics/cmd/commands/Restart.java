@@ -7,8 +7,7 @@ import com.dynatrace.sdk.server.exceptions.ServerResponseException;
 import com.dynatrace.sdk.server.servermanagement.ServerManagement;
 
 import static com.dynatrace.diagnostics.cmd.Constants.CMD_RESTART;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -17,16 +16,12 @@ import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage
 public class Restart extends AbstractHostPortCommand {
 
 	@Override public void run(CmdOptions options) throws ServerConnectionException, ServerResponseException {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(" --- Restart --- \n\n");
-		sb.append(" restarting server.... \n\n");
+		out.println(" ---- Restart ---- ");
 
 		if (new ServerManagement(getClient()).restart()) {
-			sb.append(" Server restarted sucessfully.\n");
-			printlnSuccessMessage(sb.toString());
+			out.println(" Server restarted sucessfully.");
 		} else {
-			sb.append(" Unable to restart Server.\n");
-			printlnErrorMessage(sb.toString());
+			out.println(" Unable to restart Server.");
 		}
 	}
 }

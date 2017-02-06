@@ -6,8 +6,7 @@ import com.dynatrace.sdk.server.sessions.Sessions;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.dynatrace.diagnostics.cmd.Constants.CMD_STOPSESSION;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnErrorMessage;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -16,18 +15,16 @@ import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage
 public class StopSession extends AbstractSystemProfileCommand {
 
 	@Override public void run(CmdOptions options) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		sb.append(" ---- Stop Session ----\n");
+		out.println(" ---- Stop Session ----");
 
 		Sessions sessions = new Sessions(getClient());
 		String systemProfileName = getSystemProfile();
 		String sessionName = sessions.stopRecording(systemProfileName);
 		if (StringUtils.isBlank(sessionName)) {
-			sb.append(" Stopping session recording failed.\n");
-			printlnErrorMessage(sb.toString());
+			out.println(" Stopping session recording failed.");
 		} else {
-			sb.append(" Session recording successfully stopped: ").append(sessionName).append('\n');
-			printlnSuccessMessage(sb.toString());
+			out.print(" Session recording successfully stopped: ");
+			out.println(sessionName);
 		}
 	}
 }

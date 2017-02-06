@@ -1,12 +1,10 @@
 package com.dynatrace.diagnostics.cmd.model;
 
 import com.beust.jcommander.IStringConverter;
-import com.beust.jcommander.Parameters;
 
 /**
  * @author Dariusz.Glugla
  */
-@Parameters(commandDescription = "[<hostname>[:<port>]]")
 public class HostPort {
 
 	private static final String SEPARATOR = ":";
@@ -14,7 +12,7 @@ public class HostPort {
 	private final String host;
 	private final Integer port;
 
-	public HostPort(String host, Integer port) {
+	HostPort(String host, Integer port) {
 		this.host = host;
 		this.port = port;
 	}
@@ -27,7 +25,7 @@ public class HostPort {
 		return port;
 	}
 
-	class Converter implements IStringConverter<HostPort> {
+	public static class Converter implements IStringConverter<HostPort> {
 
 		@Override public HostPort convert(String value) {
 			if (value.contains(SEPARATOR)) {

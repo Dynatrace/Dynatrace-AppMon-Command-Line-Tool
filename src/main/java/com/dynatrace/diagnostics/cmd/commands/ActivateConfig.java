@@ -6,7 +6,7 @@ import com.dynatrace.diagnostics.cmd.model.CmdOptions;
 import com.dynatrace.sdk.server.systemprofiles.SystemProfiles;
 
 import static com.dynatrace.diagnostics.cmd.Constants.*;
-import static com.dynatrace.diagnostics.cmd.MessagePrinter.printlnSuccessMessage;
+import static java.lang.System.out;
 
 /**
  * @author Dariusz.Glugla
@@ -17,20 +17,19 @@ public class ActivateConfig extends AbstractSystemProfileCommand {
 	@Parameter(names = { OPT_CONFIG_SHORT, OPT_CONFIG }, description = "configuration to activate", required = true)
 	private String config;
 
-	public String getConfig() {
-		return config;
-	}
-
 	@Override public void run(CmdOptions options) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		sb.append(" ---- Set Active Configuration ----\n");
+		out.println(" ---- Set Active Configuration ----");
 
-		String configurationName = getConfig();
 		String systemProfileName = getSystemProfile();
-		new SystemProfiles(getClient()).activateProfileConfiguration(systemProfileName, configurationName);
 
-		sb.append(" setting active configuration to ").append(configurationName).append(" for profile ").append(systemProfileName)
-				.append(" done.\n");
-		printlnSuccessMessage(sb.toString());
+		out.print(" setting active configuration to '");
+		out.print(config);
+		out.print("' for profile '");
+		out.print(systemProfileName);
+		out.print('\'');
+
+		new SystemProfiles(getClient()).activateProfileConfiguration(systemProfileName, config);
+
+		out.println(": done.");
 	}
 }
