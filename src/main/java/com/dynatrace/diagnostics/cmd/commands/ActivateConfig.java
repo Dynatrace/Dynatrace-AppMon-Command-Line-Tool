@@ -14,12 +14,12 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_ACTIVECONF, commandDescription = "activates specified configuration")
 public class ActivateConfig extends AbstractSystemProfileCommand {
 
+	public static final String HEADER = "Set Active Configuration";
+
 	@Parameter(names = { OPT_CONFIG_SHORT, OPT_CONFIG }, description = "configuration to activate", required = true)
 	private String config;
 
-	@Override public void run(CmdOptions options) throws Exception {
-		out.println(" ---- Set Active Configuration ----");
-
+	@Override public void runInternal(CmdOptions options) throws Exception {
 		String systemProfileName = getSystemProfile();
 
 		out.print(" setting active configuration to '");
@@ -31,5 +31,13 @@ public class ActivateConfig extends AbstractSystemProfileCommand {
 		new SystemProfiles(getClient()).activateProfileConfiguration(systemProfileName, config);
 
 		out.println(": done.");
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
+	}
+
+	public String getConfig() {
+		return config;
 	}
 }

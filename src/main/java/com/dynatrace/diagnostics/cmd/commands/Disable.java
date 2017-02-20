@@ -13,12 +13,16 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_DISABLE, commandDescription = "disables the system profile")
 public class Disable extends AbstractSystemProfileCommand {
 
-	@Override public void run(CmdOptions options) throws Exception {
-		out.println(" ---- Disable System Profile ----");
+	private static final String HEADER = "Disable System Profile";
 
+	@Override public void runInternal(CmdOptions options) throws Exception {
 		String systemProfileName = getSystemProfile();
 		new SystemProfiles(getClient()).disableProfile(systemProfileName);
 
 		out.println(" System Profile '" + systemProfileName + "' is now disabled");
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
 	}
 }

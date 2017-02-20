@@ -13,12 +13,16 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_ENABLE, commandDescription = "enables the system profile")
 public class Enable extends AbstractSystemProfileCommand {
 
-	@Override public void run(CmdOptions options) throws Exception {
-		out.println(" ---- Enable System Profile ----");
+	public static final String HEADER = "Enable System Profile";
 
+	@Override public void runInternal(CmdOptions options) throws Exception {
 		String systemProfileName = getSystemProfile();
 		new SystemProfiles(getClient()).enableProfile(systemProfileName);
 
 		out.println(" System Profile '" + systemProfileName + "' is now enabled");
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
 	}
 }

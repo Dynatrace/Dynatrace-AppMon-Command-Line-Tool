@@ -14,10 +14,10 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_LIST_PROFILES, commandDescription = "display system profiles")
 public class ListProfiles extends AbstractHostPortCommand {
 
-	@Override
-	public void run(CmdOptions options) throws Exception {
-		out.println(" ---- List System Profiles ----");
+	public static final String HEADER = "List System Profiles";
 
+	@Override
+	public void runInternal(CmdOptions options) throws Exception {
 		SystemProfiles systemProfiles = new SystemProfiles(getClient());
 		int counter = 1;
 		for (SystemProfile systemProfile : systemProfiles.getSystemProfiles().getProfiles()) {
@@ -25,4 +25,7 @@ public class ListProfiles extends AbstractHostPortCommand {
 		}
 	}
 
+	@Override protected String getHeader() {
+		return HEADER;
+	}
 }

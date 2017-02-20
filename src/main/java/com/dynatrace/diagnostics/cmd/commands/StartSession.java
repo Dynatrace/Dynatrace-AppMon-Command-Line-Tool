@@ -18,6 +18,8 @@ import static java.lang.System.out;
 		commandDescription = "record a new session, using optional sessionname (max. " + SESSION_NAME_MAX_SIZE + " chars)")
 public class StartSession extends AbstractSystemProfileCommand {
 
+	public static final String HEADER = "Start Session";
+
 	@Parameter(names = OPT_STARTSESSION_NAME, description = "session name")
 	private String sessionName;
 	@Parameter(names = FLAG_LOCK, description = "prevents the session from being deleted on cleanups triggered by low disk space")
@@ -27,9 +29,7 @@ public class StartSession extends AbstractSystemProfileCommand {
 	@Parameter(names = OPT_RECORDINGOPTION, description = "recording option of the session file", converter = RecordingOption.Converter.class)
 	private RecordingOption recordingOption = RecordingOption.ALL;
 
-	@Override public void run(CmdOptions options) throws Exception {
-		out.println(" ---- Start Session ----");
-
+	@Override public void runInternal(CmdOptions options) throws Exception {
 		Sessions sessions = new Sessions(getClient());
 		String systemProfileName = getSystemProfile();
 		String sessionName = sessions.startRecording(buildRequest(systemProfileName));
@@ -39,6 +39,10 @@ public class StartSession extends AbstractSystemProfileCommand {
 			out.print(" Session recording successfully started: ");
 			out.println(sessionName);
 		}
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
 	}
 
 	private StartRecordingRequest buildRequest(String systemProfile) {
@@ -54,5 +58,21 @@ public class StartSession extends AbstractSystemProfileCommand {
 			request.setSessionLocked(lock);
 		}
 		return request;
+	}
+
+	public String getSessionName() {
+		return sessionName;
+	}
+
+	public Boolean getLock() {
+		return lock;
+	}
+
+	public Boolean getNoTimestamp() {
+		return noTimestamp;
+	}
+
+	public RecordingOption getRecordingOption() {
+		return recordingOption;
 	}
 }

@@ -15,13 +15,17 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_SHUTDOWN, commandDescription = "shuts down the Dynatrace Server")
 public class Shutdown extends AbstractHostPortCommand {
 
-	@Override public void run(CmdOptions options) throws ServerConnectionException, ServerResponseException {
-		out.println(" ---- Shutdown ---- ");
+	public static final String HEADER = "Shutdown";
 
+	@Override public void runInternal(CmdOptions options) throws ServerConnectionException, ServerResponseException {
 		if (new ServerManagement(getClient()).shutdown()) {
 			out.println(" Server stopped sucessfully.");
 		} else {
 			out.println(" Unable to stop Server.");
 		}
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
 	}
 }

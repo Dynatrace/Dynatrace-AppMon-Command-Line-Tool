@@ -8,6 +8,7 @@ import com.dynatrace.diagnostics.cmd.commands.Shutdown;
 import com.dynatrace.diagnostics.cmd.model.CmdOptions;
 import com.dynatrace.sdk.server.exceptions.ServerConnectionException;
 import com.dynatrace.sdk.server.exceptions.ServerResponseException;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.InvalidParameterException;
@@ -37,10 +38,10 @@ public class Cmd {
 	@ParametersDelegate
 	private CmdOptions cmdOptions = new CmdOptions();
 
-	private Cmd() {
+	Cmd() {
 		jCommander = new JCommander(this);
 
-		jCommander.setAcceptUnknownOptions(true);
+		jCommander.setAcceptUnknownOptions(false);
 		jCommander.setCaseSensitiveOptions(false);
 		jCommander.setProgramName(DT_CMD);
 
@@ -59,42 +60,40 @@ public class Cmd {
 		new Cmd().run(args);
 	}
 
-	private void run(String[] args) {
-		try {
-			Package classPackage = Cmd.class.getPackage();
-			out.println("\n" +
-					StringUtils.repeat('-', TITLE_SIZE) + "\n" +
-					StringUtils.center(classPackage.getImplementationTitle(), TITLE_SIZE) + "\n" +
-					StringUtils.center("Copyright (C) 2004-2017 " + classPackage.getImplementationVendor(), TITLE_SIZE)
-					+ "\n" +
-					StringUtils.repeat('-', TITLE_SIZE) + "\n" +
-					StringUtils.center(" Version " + classPackage.getImplementationVersion(), TITLE_SIZE) + "\n");
+	void run(String[] args) {
+		Package classPackage = Cmd.class.getPackage();
+		out.println("\n" +
+				StringUtils.repeat('-', TITLE_SIZE) + "\n" +
+				StringUtils.center(classPackage.getImplementationTitle(), TITLE_SIZE) + "\n" +
+				StringUtils.center("Copyright (C) 2004-2017 " + classPackage.getImplementationVendor(), TITLE_SIZE)
+				+ "\n" +
+				StringUtils.repeat('-', TITLE_SIZE) + "\n" +
+				StringUtils.center(" Version " + classPackage.getImplementationVersion(), TITLE_SIZE) + "\n");
 
-			jCommander.parse(args);
-			run(getExecutedCommand());
-		} catch (ParameterException | InvalidParameterException | NullPointerException e) {
+		try {
+			getExecutedCommand(args).run(cmdOptions);
+		} catch (ServerConnectionException e) {
+			out.println(MSG_NO_CONNECTION + e.getMessage());
+		} catch (ServerResponseException e) {
+			out.println(MSG_NO_RESPONSE + e.getMessage());
+		} catch (ParameterException e) {
+			out.println(MSG_NO_COMMAND_SPECIFIED + " (" + e.getMessage() + ")\n");
+			jCommander.usage();
+		} catch (InvalidParameterException | NullPointerException e) {
 			out.println(e.getMessage() + "\n");
 			jCommander.usage();
-		}
-	}
-
-	private void run(AbstractCommand cmd) {
-		try {
-			cmd.run(cmdOptions);
-		} catch (ServerConnectionException e) {
-			out.println(" Unable to establish connection with Dynatrace Server: " + e.getMessage());
-		} catch (ServerResponseException e) {
-			out.println(" Unable to fetch response from Dynatrace Server: " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			out.println(" Uknown error occured: " + e.getMessage());
+			out.println(MSG_UNKNOWN_ERROR + e.getMessage());
 		}
 	}
 
-	private AbstractCommand getExecutedCommand() {
+	@VisibleForTesting
+	AbstractCommand getExecutedCommand(String[] args) {
+		jCommander.parse(args);
 		String parsedCommand = jCommander.getParsedCommand();
 		if (parsedCommand == null) {
-			throw new InvalidParameterException("No command specified");
+			throw new InvalidParameterException(MSG_NO_COMMAND_SPECIFIED);
 		}
 		switch (parsedCommand) {
 			case CMD_STARTUP:
@@ -116,8 +115,7 @@ public class Cmd {
 			case CMD_STOPSESSION:
 				return stopSessionCmd;
 			default:
-				jCommander.usage();
-				throw new InvalidParameterException("Unknown operation: " + parsedCommand);
+				throw new InvalidParameterException(MSG_UNKNOWN_OPERATION + parsedCommand);
 		}
 	}
 }

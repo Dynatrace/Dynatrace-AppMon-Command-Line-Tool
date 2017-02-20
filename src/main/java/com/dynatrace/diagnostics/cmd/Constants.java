@@ -1,5 +1,7 @@
 package com.dynatrace.diagnostics.cmd;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Constants definitions for CMD
  *
@@ -14,6 +16,7 @@ public final class Constants {
 
 	public static final String DT_HOME = "DT_HOME";
 
+	public static final String TITLE_PREFIX = StringUtils.repeat('-', 4);
 	static final int TITLE_SIZE = 60;
 
 	// max size in repository db for session name is 100
@@ -24,6 +27,12 @@ public final class Constants {
 	public static final String OPT_DTHOME = "-dthome";
 
 	static final String DT_CMD = "dtcmd";
+
+	static final String MSG_NO_COMMAND_SPECIFIED = "No command specified";
+	static final String MSG_UNKNOWN_OPERATION = "Unknown operation: ";
+	static final String MSG_NO_CONNECTION = " Unable to establish connection with Dynatrace Server: ";
+	static final String MSG_NO_RESPONSE = " Unable to fetch response from Dynatrace Server: ";
+	static final String MSG_UNKNOWN_ERROR = " Uknown error occured: ";
 
 	public static final String FLAG_VERBOSE = "-verbose";
 	public static final String FLAG_NO_SSL = "-nossl";

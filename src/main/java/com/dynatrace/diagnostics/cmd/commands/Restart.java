@@ -15,13 +15,17 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_RESTART, commandDescription = "restarts the Dynatrace Server")
 public class Restart extends AbstractHostPortCommand {
 
-	@Override public void run(CmdOptions options) throws ServerConnectionException, ServerResponseException {
-		out.println(" ---- Restart ---- ");
+	public static final String HEADER = "Restart";
 
+	@Override public void runInternal(CmdOptions options) throws ServerConnectionException, ServerResponseException {
 		if (new ServerManagement(getClient()).restart()) {
 			out.println(" Server restarted sucessfully.");
 		} else {
 			out.println(" Unable to restart Server.");
 		}
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
 	}
 }

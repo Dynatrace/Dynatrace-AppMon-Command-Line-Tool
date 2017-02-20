@@ -19,11 +19,11 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_STARTUP, commandDescription = "starts up local server")
 public class Startup extends AbstractCommand {
 
+	public static final String HEADER = "Startup";
 	private static final String LAUNCHER_INI_FILENAME = "dtserver.ini";
 
 	@Override
-	public void run(CmdOptions options) {
-		out.println(" ---- Startup ----");
+	public void runInternal(CmdOptions options) {
 		out.println(" starting server ...");
 
 		String osName = System.getProperty("os.name").toUpperCase();
@@ -47,8 +47,13 @@ public class Startup extends AbstractCommand {
 		out.print(errorMessage);
 		out.println(".");
 		if (isWindows) {
-			out.println(" Please ensure to run dtcmd as administrator!");
+			out.println(" Please ensure to runInternal dtcmd as administrator!");
 		}
+	}
+
+	@Override
+	public String getHeader() {
+		return HEADER;
 	}
 
 	private String startupOSDependentServers(File serverLaunchDir, boolean isWindows) {
@@ -189,7 +194,7 @@ public class Startup extends AbstractCommand {
 		 * <code>false</code> otherwise
 		 * @author martin.wurzinger
 		 */
-		public boolean run(String command, File workingDir) {
+		boolean run(String command, File workingDir) {
 			final Process proc;
 
 			try {

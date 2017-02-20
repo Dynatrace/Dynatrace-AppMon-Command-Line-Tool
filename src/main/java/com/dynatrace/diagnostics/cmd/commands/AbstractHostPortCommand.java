@@ -70,4 +70,20 @@ abstract class AbstractHostPortCommand extends AbstractCommand {
 		}
 		return serverConfig;
 	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public Boolean getNoSSL() {
+		return noSSL;
+	}
+
+	public List<HostPort> getHostPorts() {
+		return hostPorts;
+	}
 }

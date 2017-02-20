@@ -14,9 +14,9 @@ import static java.lang.System.out;
 @Parameters(commandNames = CMD_STOPSESSION, commandDescription = "stop recording session")
 public class StopSession extends AbstractSystemProfileCommand {
 
-	@Override public void run(CmdOptions options) throws Exception {
-		out.println(" ---- Stop Session ----");
+	public static final String HEADER = "Stop Session";
 
+	@Override public void runInternal(CmdOptions options) throws Exception {
 		Sessions sessions = new Sessions(getClient());
 		String systemProfileName = getSystemProfile();
 		String sessionName = sessions.stopRecording(systemProfileName);
@@ -26,5 +26,9 @@ public class StopSession extends AbstractSystemProfileCommand {
 			out.print(" Session recording successfully stopped: ");
 			out.println(sessionName);
 		}
+	}
+
+	@Override protected String getHeader() {
+		return HEADER;
 	}
 }
