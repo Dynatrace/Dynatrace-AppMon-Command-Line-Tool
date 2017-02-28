@@ -228,8 +228,8 @@ If you use the corresponding command line parameters (`-ssl`, `-user`, `-pass`, 
 * **-startsession [-f \<sessionname\>] [-recordingoption \<recoption\>] [-lock]**: Starts recording of incoming PurePaths to a session file, using the provided session name as file name. A default name is generated if the parameter sessionname is omitted.
 * **-stopsession**: Stops recording of incoming PurePaths. Prints an error message if recording is currently not active.
 
-#### Building
+#### <a name="anchor_building"></a> Building
 In order to build the library, one must execute `mvn clean install` or `mvn clean package`.
 
-##### <a name="tests"></a> Running tests
+##### <a name="anchor_tests"></a> Running tests
 This tool comes with some unit tests. To run them, execute the following command: `mvn clean test`.
