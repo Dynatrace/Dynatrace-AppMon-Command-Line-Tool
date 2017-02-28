@@ -11,8 +11,8 @@ public class WindowsStartupCommandBuilder extends AbstractStartupCommandBuilder 
 
 	private static final String SERVER_BINARY = "dtserver.exe";
 	private static final String FRONTEND_SERVER_BINARY = "dtfrontendserver.exe";
-	private static final String SERVER_SERVICE_NAME = "Dynatrace Server";
-	private static final String FRONTEND_SERVER_SERVICE_NAME = "Dynatrace Frontend Server";
+	private static final String SERVER_SERVICE_NAME = "Dynatrace Server 7.0";
+	private static final String FRONTEND_SERVER_SERVICE_NAME = "Dynatrace Frontend Server 7.0";
 
 	WindowsStartupCommandBuilder(File serverLaunchDir) {
 		super(serverLaunchDir);

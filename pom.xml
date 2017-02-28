@@ -134,6 +134,8 @@
                     <archive>
                         <manifest>
                             <mainClass>com.dynatrace.diagnostics.cmd.Cmd</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
                 </configuration>
