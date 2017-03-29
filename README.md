@@ -3,7 +3,6 @@
 
 ### Table of Contents
 - [Description](#anchor_description)
-- [Installation](#anchor_installation)
 - [General options](#anchor_general-options)
 - [Custom properties file](#anchor_custom-properties-file)
 - [Server options](#anchor_server-options)
@@ -159,26 +158,6 @@ Usage: dtcmd [options] [command] [command options]
             username to log in with
           -verbose
             provide a more detailed output (in case of errors)
-```
-
-#### <a name="anchor_installation"></a> Installation
-Manual installation is currently required, maven repository might be available in the future.
-
-##### Maven
-- Download the latest artifact from [Releases](https://github.com/Dynatrace/Dynatrace-Server-REST-Java-SDK/releases)
-- Put the artifact under */lib*
-- Register it in your Maven repository:
-```
-mvn install:install-file -DgroupId=com.dynatrace.sdk -DartifactId=server-rest-sdk -Dversion=7.0.0 -Dpackaging=maven-plugin -Dfile=lib/<jar-file_name>
-```
-
-##### Gradle
-- Download the latest artifact from [Releases](https://github.com/Dynatrace/Dynatrace-Server-REST-Java-SDK/releases)
-- Put the artifact under */lib*
-- Put the following code in your `dependencies` block:
-
-```groovy
-compile fileTree(dir: 'lib', include: '*.jar')
 ```
 
 #### <a name="anchor_general-options"></a> General Options
