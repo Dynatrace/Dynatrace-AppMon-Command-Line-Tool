@@ -19,7 +19,7 @@
 
     <repositories>
         <repository>
-            <id>project-repository</id>
+            <id>local-repo</id>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>ignore</checksumPolicy>
