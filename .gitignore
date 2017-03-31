@@ -6,6 +6,6 @@ hs_err_pid*
 .gitignore
 /.idea/
 /*.ini
-/dtcmd.*
+dtcmd.xml
 *.properties
 /src/test/java/com/dynatrace/diagnostics/jCommander/
