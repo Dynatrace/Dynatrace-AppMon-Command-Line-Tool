@@ -126,11 +126,14 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>dynatrace-cmd-${project.version}</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>com.dynatrace.diagnostics.cmd.Cmd</mainClass>
