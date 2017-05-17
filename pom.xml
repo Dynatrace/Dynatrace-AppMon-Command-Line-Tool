@@ -17,21 +17,6 @@
 
     <inceptionYear>2017</inceptionYear>
 
-    <repositories>
-        <repository>
-            <id>local-repo</id>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>ignore</checksumPolicy>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>file://${project.basedir}/repo</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
