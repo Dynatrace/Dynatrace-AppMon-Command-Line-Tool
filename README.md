@@ -15,10 +15,11 @@ AppMon offers an easy to use command line interface for basic server operations.
 
 To connect to the AppMon Server, the host name and integrated web server port have to be specified. If they are not specified, AppMon uses *localhost:8020*, by default, or port *8021* for a SSL connection. For more information, see [General Options](#anchor_general-options). Starting with version 6.3.x the default connection type is *https*. Use the `-nossl` option to connect via *http*.
 
-Windows batch file (_dtcmd.cmd_), bash script (_dtcmd.sh_), and a c-shell script (_dtcmd.csh_) to use on Windows, Linux and Unix systems, are provided in public repository. You can also run the program with following command:
+You can download this tool from the [releases](https://github.com/Dynatrace/Dynatrace-Command-Line-Tool/releases) page and run with following command:
 ```
 java -jar dynatrace-cmd-7.0.0.jar
 ```
+Windows batch file (_dtcmd.cmd_), bash script (_dtcmd.sh_), and a c-shell script (_dtcmd.csh_) to use on Windows, Linux and Unix systems, are also provided in public repository.
 
 **dtcmd** is deprecated for upgrade or migration use. Use the [dynatrace-migration Tool](https://files.dynatrace.com/downloads/migrationtool/dynatrace-migration.jar) (link to the latest version) instead.
 
